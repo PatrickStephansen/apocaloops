@@ -1,14 +1,14 @@
 <template>
-	<h1>Apocaloops</h1>
+	<div class="looper-app">
+		<h1>Apocaloops</h1>
+		<folder-selector />
+	</div>
 </template>
 
 <script>
-const context = new AudioContext();
-const o = new OscillatorNode(context);
-o.connect(context.destination);
-o.start();
-
+import FolderSelector from './FolderSelector';
 export default {
-	name: 'looper'
+	name: 'looper',
+	components: { FolderSelector }
 };
 </script>
