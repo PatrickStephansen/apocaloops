@@ -66,17 +66,15 @@ export default {
 				.then(() => readDir(this.banksDirectory))
 				.then(banks => {
 					this.banks = banks;
-					return this.onBankSelection(banks[0]);
+					return this.onBankSelection(this.getBankPath(banks[0]));
 				});
 		},
 		onBankSelection: function(newBank) {
-			const newBankPath = this.getBankPath(newBank);
-			if (!newBank || this.selectedBank === newBankPath) return;
-			this.selectedBank = newBankPath;
-			return readDir(newBankPath)
+			this.selectedBank = newBank;
+			return readDir(newBank)
 				.then(samples => {
 					this.samples = samples;
-					this.selectedSample = join(newBankPath, samples[0]);
+					this.selectedSample = join(newBank, samples[0]);
 				})
 				.catch(e => console.error('error setting banks', e));
 		},
