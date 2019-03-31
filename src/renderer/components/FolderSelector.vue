@@ -12,7 +12,12 @@
 		</div>
 		<div class="form-group">
 			<label for="selected-bank">Selected Bank</label>
-			<select name="selected-bank" id="selected-bank" v-model="selectedBank" @change="onBankSelection($event.target.value)">
+			<select
+				name="selected-bank"
+				id="selected-bank"
+				v-model="selectedBank"
+				@change="onBankSelection($event.target.value)"
+			>
 				<option v-for="bank of banks" :value="getBankPath(bank)" :key="bank"
 					>{{ bank }}
 				</option>
@@ -24,7 +29,7 @@
 				<li
 					v-for="sample of samples"
 					:key="sample"
-					:class="{ active: selectedSample == sample }"
+					:class="{ sample: true, active: selectedSampleFileName == sample }"
 				>
 					{{ sample }}
 				</li>
@@ -81,7 +86,19 @@ export default {
 		getBankPath: function(bank) {
 			return join(this.banksDirectory, bank);
 		}
+	},
+	computed: {
+		selectedSampleFileName: function() {
+			return this.selectedSample.slice(this.selectedBank.length + 1);
+		}
 	}
 };
 </script>
+
+<style>
+.sample.active {
+	background-color: yellow;
+}
+</style>
+
 
