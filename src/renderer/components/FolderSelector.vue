@@ -1,13 +1,15 @@
 <template>
 	<form name="folder-selection">
 		<div class="form-group">
-			<label for="banks-directory">Banks Directory</label>
+			<label for="library-directory">Library Directory</label>
 			<input
 				type="text"
-				name="banks-directory"
-				id="banks-directory"
-				:value="banksDirectory"
-				@blur="onBanksDirectorySelection($event.target.value)"
+				name="library-directory"
+				id="library-directory"
+				:value="libraryDirectory"
+				@blur="
+					onLibraryDirectorySelection({ libraryDirectory: $event.target.value })
+				"
 			/>
 		</div>
 		<div class="form-group">
@@ -15,11 +17,11 @@
 			<select
 				name="selected-bank"
 				id="selected-bank"
-				v-model="selectedBank"
-				@change="onBankSelection($event.target.value)"
+				:value="selectedBankDirectory"
+				@change="onBankSelection({ bankPath: $event.target.value })"
 			>
-				<option v-for="bank of banks" :value="getBankPath(bank)" :key="bank"
-					>{{ bank }}
+				<option v-for="bank of banks" :value="bank.path" :key="bank.path"
+					>{{ bank.name }}
 				</option>
 			</select>
 		</div>
@@ -28,10 +30,14 @@
 			<ul>
 				<li
 					v-for="sample of samples"
-					:key="sample"
-					:class="{ sample: true, active: selectedSampleFileName == sample }"
+					:key="sample.path"
+					:class="{
+						sample: true,
+						active: selectedSampleFileName == sample.name
+					}"
+					@click="onSampleSelection({ samplePath: sample.path })"
 				>
-					{{ sample }}
+					{{ sample.name }}
 				</li>
 			</ul>
 		</div>
@@ -39,58 +45,27 @@
 </template>
 
 <script>
-import { promisify } from 'util';
-import { access, mkdir, readdir } from 'fs';
-import { homedir } from 'os';
 import { join } from 'path';
-
-const exists = promisify(access);
-const readdirPromise = promisify(readdir);
-const readDir = path => readdirPromise(path);
+import { homedir } from 'os';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
 	name: 'folder-selector',
-	data: function() {
-		return {
-			banksDirectory: '',
-			selectedBank: '',
-			banks: [],
-			selectedSample: '',
-			samples: []
-		};
-	},
 	mounted: function() {
-		this.onBanksDirectorySelection(join(homedir(), '.apocaloops'));
+		this.onLibraryDirectorySelection({
+			libraryDirectory: join(homedir(), '.apocaloops')
+		});
 	},
 	methods: {
-		onBanksDirectorySelection: function(newBanksDirectory) {
-			if (newBanksDirectory === this.banksDirectory) return;
-			this.banksDirectory = newBanksDirectory;
-			return exists(this.banksDirectory)
-				.catch(() => mkdir(this.banksDirectory))
-				.then(() => readDir(this.banksDirectory))
-				.then(banks => {
-					this.banks = banks;
-					return this.onBankSelection(this.getBankPath(banks[0]));
-				});
-		},
-		onBankSelection: function(newBank) {
-			this.selectedBank = newBank;
-			return readDir(newBank)
-				.then(samples => {
-					this.samples = samples;
-					this.selectedSample = join(newBank, samples[0]);
-				})
-				.catch(e => console.error('error setting banks', e));
-		},
-		getBankPath: function(bank) {
-			return join(this.banksDirectory, bank);
-		}
+		...mapActions({
+			onLibraryDirectorySelection: 'setLibraryDirectory',
+			onBankSelection: 'selectBank',
+			onSampleSelection: 'selectSample'
+		})
 	},
 	computed: {
-		selectedSampleFileName: function() {
-			return this.selectedSample.slice(this.selectedBank.length + 1);
-		}
+		...mapState(['libraryDirectory', 'selectedBankDirectory']),
+		...mapGetters(['selectedSampleFileName', 'banks', 'samples'])
 	}
 };
 </script>
