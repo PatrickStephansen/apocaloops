@@ -27,13 +27,17 @@ build_script:
 
 test: off
 
+artifacts:
+  - path: 'build\apocaloops *.exe'
+    name: 'Windows executable'
+
 deploy:
   release: apocaloops-appveyor-v$(appveyor_build_version)
   description: 'Apocaloops test release'
   provider: GitHub
   auth_token:
     secure: ipKyqhOAwoaDWKmffCB20kyRzDQpQueR5VmA18JkDSQOmLZnbc10DaGUjFGKTcCA
-  artifact: /build/apocaloops *.exe
+  artifact: /.*\.exe/
   draft: false
   prerelease: false
   on:
