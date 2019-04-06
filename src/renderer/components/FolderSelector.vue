@@ -2,15 +2,7 @@
 	<form name="folder-selection">
 		<div class="form-group">
 			<label for="library-directory">Library Directory</label>
-			<input
-				type="text"
-				name="library-directory"
-				id="library-directory"
-				:value="libraryDirectory"
-				@blur="
-					onLibraryDirectorySelection({ libraryDirectory: $event.target.value })
-				"
-			/>
+			<p id="library-directory">{{ libraryDirectory }}</p>
 		</div>
 		<div class="form-group">
 			<label for="selected-bank">Selected Bank</label>
@@ -64,7 +56,10 @@ export default {
 		})
 	},
 	computed: {
-		...mapState(['libraryDirectory', 'selectedBankDirectory']),
+		...mapState({
+			libraryDirectory: state => state.samples.libraryDirectory,
+			selectedBankDirectory: state => state.samples.selectedBankDirectory
+		}),
 		...mapGetters(['selectedSampleFileName', 'banks', 'samples'])
 	}
 };
