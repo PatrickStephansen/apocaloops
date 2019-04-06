@@ -32,7 +32,7 @@ artifacts:
     name: 'Windows executable'
 
 deploy:
-  release: apocaloops-appveyor-v$(appveyor_build_version)
+  release: $(appveyor_repo_tag_name)
   description: 'Apocaloops test release'
   provider: GitHub
   auth_token:
@@ -41,5 +41,4 @@ deploy:
   draft: false
   prerelease: false
   on:
-    branch: master
     APPVEYOR_REPO_TAG: true
