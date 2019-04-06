@@ -26,3 +26,16 @@ build_script:
   - npm run build
 
 test: off
+
+deploy:
+  release: apocaloops-appveyor-v$(appveyor_build_version)
+  description: 'Apocaloops test release'
+  provider: GitHub
+  auth_token:
+    secure: ipKyqhOAwoaDWKmffCB20kyRzDQpQueR5VmA18JkDSQOmLZnbc10DaGUjFGKTcCA
+  artifact: /build/*
+  draft: false
+  prerelease: false
+  on:
+    branch: master
+    APPVEYOR_REPO_TAG: true
