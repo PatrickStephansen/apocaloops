@@ -53,8 +53,14 @@
     }
   },
   "dependencies": {
-    "vue": "^2.5.16",
+    "audio-decode": "^1.4.0",
     "axios": "^0.18.0",
+    "flac.js": "^0.2.1",
+    "mp3.js": "^0.2.0",
+    "ogg.js": "^0.1.0",
+    "opus.js": "^0.1.1",
+    "vorbis.js": "^0.1.1",
+    "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",

@@ -2,6 +2,8 @@ import { join } from 'path';
 import { promisify } from 'util';
 import { access, mkdir, readdir } from 'fs';
 
+import { samplePlayer } from '../../services/sample-player';
+
 const exists = promisify(access);
 const readdirPromise = promisify(readdir);
 const readDir = path => readdirPromise(path, { encoding: 'utf-8' });
@@ -31,12 +33,17 @@ const mutations = {
 	},
 	selectSampleFilePath(state, selectedSampleFilePath) {
 		state.selectedSampleFilePath = selectedSampleFilePath;
+	},
+	addError(state, error) {
+		state.errors.push(error);
 	}
 };
 
 const actions = {
 	setLibraryDirectory({ commit, dispatch }, { libraryDirectory }) {
-		if (!libraryDirectory) return Promise.reject(new Error('nothing given for libraryDirectory'));
+		if (!libraryDirectory) {
+			return Promise.reject(new Error('nothing given for libraryDirectory'));
+		}
 		commit('setLibraryDirectory', libraryDirectory);
 		return exists(libraryDirectory)
 			.catch(() => mkdir(libraryDirectory))
@@ -49,14 +56,25 @@ const actions = {
 	},
 	selectBank({ commit, dispatch }, { bankPath }) {
 		commit('selectBankDirectory', bankPath);
-		return readDir(bankPath).then(samples => {
-			const samplePaths = samples.map(sample => join(bankPath, sample));
-			commit('setSampleFilePaths', samplePaths);
-			return dispatch('selectSample', { samplePath: samplePaths[0] });
-		});
+		return readDir(bankPath)
+			.then(samples => {
+				const samplePaths = samples.map(sample => ({
+					path: join(bankPath, sample),
+					name: sample
+				}));
+				commit('setSampleFilePaths', samplePaths.map(sample => sample.path));
+				return samplePlayer.loadSamples(samplePaths).then(() => {
+					if (!samplePaths.length) {
+						return Promise.resolve();
+					}
+					return dispatch('selectSample', { samplePath: samplePaths[0].path });
+				});
+			})
+			.catch(e => commit('addError', e));
 	},
-	selectSample({ commit }, { samplePath }) {
+	selectSample({ commit, getters }, { samplePath }) {
 		commit('selectSampleFilePath', samplePath);
+		samplePlayer.playSample(getters.selectedSampleFileName);
 	}
 };
 

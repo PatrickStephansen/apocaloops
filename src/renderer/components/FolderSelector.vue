@@ -33,6 +33,12 @@
 				</li>
 			</ul>
 		</div>
+		<div v-if="errors.length">
+			Errors:
+			<ul>
+				<li v-for="error in errors" class="danger" :key="error">{{ error }}</li>
+			</ul>
+		</div>
 	</form>
 </template>
 
@@ -58,7 +64,8 @@ export default {
 	computed: {
 		...mapState({
 			libraryDirectory: state => state.samples.libraryDirectory,
-			selectedBankDirectory: state => state.samples.selectedBankDirectory
+			selectedBankDirectory: state => state.samples.selectedBankDirectory,
+			errors: state => state.samples.errors
 		}),
 		...mapGetters(['selectedSampleFileName', 'banks', 'samples'])
 	}
