@@ -27,7 +27,7 @@ install:
 - nvm install 10
 - curl -o- -L https://yarnpkg.com/install.sh | bash
 - source ~/.bashrc
-- npm install -g xvfb-maybe
+- npm install -g xvfb-maybe cfonts
 script:
 - npm run build
 branches:
