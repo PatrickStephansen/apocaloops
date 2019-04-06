@@ -37,9 +37,10 @@ deploy:
   provider: releases
   api_key:
     secure: YjljsZoZqWB74XM48w75dA3KOCf+MLsBhio8XA6VUjFMtfdAbe371AyXkrFDPjYAtV+3IPFzwSMuL1EP8pldJdwg95AJB5SFO9dA3O3tkLcbZIZucY5kLg10Bzr/f/upbz4nJ5XhIGzH84TFG1+JuR0hA2BKGHXQMBgildLHZcjZfrRUoSts0oHdh6ldGmiwCYrBeyuH0pQlXjP5IhOY0jXzuZeqlVlpE9sboBEnSTkJDKR8RxHY7PwhLO53OgId044XAar+t2dhtEmMmTFPyECive8saXKccbBLRsh6aqcTcN7Ue4bPr3pHacsTf1d2rPkvatmkA2seWTQyOIrscXXXsEBfsEM6+Xy3inX6xEn/kQ1B7bQdL34zKyjJ8XywzVmjp3xkgRxsy6VEaHPxc5Z5erfNZUD5MgaCmYv8URR81xEV6yk7w+TWS47NV8oTJcRzsswkEzvSx7SMlcq7YKVKObFdqCEup/L1Ap1uPb4lQsQTgrzzHvYOBYYdE7q2YFjotj1UPmOKofD6jxX+i7CNxwJ7QQS76N8bvey4ZnKgvRhaBaOdAzv4uAcSJtEXR6B4Ize+7ZA4x25Rl3ee/zYuQFp7EU2OxuYoOYMFFxWbt430rdaUTYVypYuK5SlcS5VxB+VxSKAc8wb9aSFJKryfESnRWjpJAfPp9didUn4=
+  file_glob: true
   file:
-  - build/apocaloops 0.0.1.AppImage
-  - build/apocaloops-0.0.1-mac.zip
+  - build/apocaloops *.AppImage
+  - build/apocaloops-*-mac.zip
   skip_cleanup: true
   on:
     tags: true
