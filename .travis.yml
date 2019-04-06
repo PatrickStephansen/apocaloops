@@ -26,8 +26,7 @@ before_install:
 install:
 - nvm install 10
 - source ~/.bashrc
-- npm install -g xvfb-maybe cfonts
-- npm install
+- npm install -g xvfb-maybe
 script:
 - npm run build
 branches:
