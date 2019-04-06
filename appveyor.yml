@@ -33,7 +33,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: ipKyqhOAwoaDWKmffCB20kyRzDQpQueR5VmA18JkDSQOmLZnbc10DaGUjFGKTcCA
-  artifact: /build/*.*
+  artifact: /build/apocaloops *.exe
   draft: false
   prerelease: false
   on:
