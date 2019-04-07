@@ -31,6 +31,7 @@ module.exports = {
 			}
 		],
 		'no-tabs': 0,
-		"indent": ["error", "tab"]
+		indent: ['error', 'tab'],
+		'standard/computed-property-even-spacing': 0
 	}
 };
