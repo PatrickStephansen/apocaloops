@@ -6,11 +6,21 @@ import 'mp3.js';
 import 'opus.js';
 import 'vorbis.js';
 
-const readToAudioBuffer = filePath =>
-	promisify(readFile)(filePath).then(decode);
-
 let buffers = new Map();
 const audioContext = new AudioContext();
+const channelSplitter = new ChannelSplitterNode(audioContext, {
+	numberOfOutputs: 1
+});
+const channelMerger = new ChannelMergerNode(audioContext, {
+	numberOfInputs: 1
+});
+channelMerger.connect(audioContext.destination);
+channelSplitter.connect(channelMerger);
+
+const readToAudioBuffer = filePath =>
+	promisify(readFile)(filePath).then(buffer =>
+		decode(buffer, { context: audioContext })
+	);
 
 export const samplePlayer = {
 	loadSamples(samplePaths) {
@@ -33,7 +43,9 @@ export const samplePlayer = {
 		const bufferPlabackNode = new AudioBufferSourceNode(audioContext, {
 			buffer: sample
 		});
-		bufferPlabackNode.connect(audioContext.destination);
+
+		bufferPlabackNode.connect(channelSplitter);
+
 		bufferPlabackNode.start();
 	}
 };
