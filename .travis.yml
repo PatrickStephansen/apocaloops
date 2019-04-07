@@ -30,9 +30,6 @@ install:
 script:
 - npm install
 - npm run build
-branches:
-  only:
-  - master
 # Only build tags
 if: tag IS present
 deploy:
@@ -45,6 +42,4 @@ deploy:
   - build/apocaloops-*-mac.zip
   skip_cleanup: true
   on:
-    repo: PatrickStephansen/apocaloops
-    branch: master
     tags: true
