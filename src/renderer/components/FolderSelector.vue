@@ -3,6 +3,12 @@
 		<div class="form-group">
 			<label for="library-directory">Library Directory</label>
 			<p id="library-directory">{{ libraryDirectory }}</p>
+			<button
+				type="button"
+				@click="onLibraryDirectorySelection({ libraryDirectory })"
+			>
+				Rescan
+			</button>
 		</div>
 		<div class="form-group">
 			<label for="selected-bank">Selected Bank</label>
