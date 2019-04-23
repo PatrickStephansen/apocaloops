@@ -16,6 +16,7 @@ install:
   - ps: Install-Product node 10 x64
   - git reset --hard HEAD
   - node --version
+  - npm install
 
 build_script:
   - npm run build
