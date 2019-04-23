@@ -1,5 +1,6 @@
 <template>
 	<div class="channel">
+		<gain-control :gain="gain" @set-gain="$listeners['set-gain']"/>
 		<bank-selector
 			:selectedBankDirectory="selectedBankDirectory"
 			:banks="banks"
@@ -16,6 +17,7 @@
 <script>
 import BankSelector from './BankSelector';
 import SampleList from './SampleList';
+import GainControl from './GainControl';
 
 export default {
 	name: 'sampler-channel',
@@ -24,11 +26,13 @@ export default {
 		'banks',
 		'selectedBankDirectory',
 		'selectedSample',
-		'samples'
+		'samples',
+		'gain'
 	],
 	components: {
 		BankSelector,
-		SampleList
+		SampleList,
+		GainControl
 	}
 };
 </script>

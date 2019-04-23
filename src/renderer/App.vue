@@ -5,30 +5,35 @@
 			:libraryDirectory="libraryDirectory"
 			@rescan="onLibraryDirectorySelection($event)"
 		/>
-		<div
-			class="channel-container"
-			v-for="(channel, channelNumber) in channels"
-			:key="channelNumber"
-		>
-			<sampler-channel
-				:channelNumber="channelNumber"
-				:banks="banks"
-				:selectedBankDirectory="
-					selectedBankPerChannel.find(s => s.channelNumber === channelNumber)
-				"
-				:selectedSample="
-					selectedSamplePerChannel.find(s => s.channelNumber === channelNumber)
-				"
-				:samples="
-					getSamplesForChannel(channelNumber)
-				"
-				@bank-selected="
-					onBankSelection({ channelNumber, bankPath: $event.bankPath })
-				"
-				@sample-selected="
-					onSampleSelection({ channelNumber, samplePath: $event.samplePath })
-				"
-			/>
+		<div class="channels">
+			<div
+				class="channel-container"
+				v-for="(channel, channelNumber) in channels"
+				:key="channelNumber"
+			>
+				<h2>Channel {{ channelNumber + 1 }}</h2>
+				<sampler-channel
+					:channelNumber="channelNumber"
+					:banks="banks"
+					:selectedBankDirectory="
+						selectedBankPerChannel.find(s => s.channelNumber === channelNumber)
+					"
+					:selectedSample="
+						selectedSamplePerChannel.find(
+							s => s.channelNumber === channelNumber
+						)
+					"
+					:gain="channel.gain"
+					:samples="getSamplesForChannel(channelNumber)"
+					@bank-selected="
+						onBankSelection({ channelNumber, bankPath: $event.bankPath })
+					"
+					@sample-selected="
+						onSampleSelection({ channelNumber, samplePath: $event.samplePath })
+					"
+					@set-gain="onSetGain({ channelNumber, gain: $event.gain })"
+				/>
+			</div>
 		</div>
 		<error-list :errors="errors" />
 	</div>
@@ -54,7 +59,8 @@ export default {
 		...mapActions({
 			onLibraryDirectorySelection: 'setLibraryDirectory',
 			onBankSelection: 'selectBank',
-			onSampleSelection: 'selectSample'
+			onSampleSelection: 'selectSample',
+			onSetGain: 'setChannelGain'
 		}),
 		getSamplesForChannel(channelNumber) {
 			const channel = this.samplesPerChannel.find(
@@ -88,5 +94,10 @@ export default {
 </script>
 
 <style>
-/* CSS */
+.channels {
+	display: flex;
+}
+.channel-container {
+	flex: 1 1 auto;
+}
 </style>

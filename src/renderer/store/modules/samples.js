@@ -23,12 +23,14 @@ const state = {
 		{
 			selectedBankDirectory: '',
 			sampleFilePaths: [],
-			selectedSampleFilePath: ''
+			selectedSampleFilePath: '',
+			gain: 1
 		},
 		{
 			selectedBankDirectory: '',
 			sampleFilePaths: [],
-			selectedSampleFilePath: ''
+			selectedSampleFilePath: '',
+			gain: 1
 		}
 	],
 	errors: []
@@ -53,6 +55,9 @@ const mutations = {
 		state.channels[
 			channelNumber
 		].selectedSampleFilePath = selectedSampleFilePath;
+	},
+	setChannelGain(state, { gain, channelNumber }) {
+		state.channels[channelNumber].gain = gain;
 	},
 	addError(state, error) {
 		state.errors.push(error);
@@ -138,6 +143,10 @@ const actions = {
 			).samplePath,
 			channelNumber
 		);
+	},
+	setChannelGain({ commit }, { gain, channelNumber }) {
+		commit('setChannelGain', { gain, channelNumber });
+		samplePlayer.setChannelGain(gain, channelNumber);
 	}
 };
 

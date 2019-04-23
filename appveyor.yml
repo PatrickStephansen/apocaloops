@@ -29,7 +29,7 @@ artifacts:
 
 deploy:
   release: $(appveyor_repo_tag_name)
-  description: 'Apocaloops test release'
+  description: 'Add channels with gain controls, and bundle some samples'
   provider: GitHub
   auth_token:
     secure: ipKyqhOAwoaDWKmffCB20kyRzDQpQueR5VmA18JkDSQOmLZnbc10DaGUjFGKTcCA

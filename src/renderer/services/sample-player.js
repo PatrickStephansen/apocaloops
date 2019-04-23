@@ -58,5 +58,12 @@ export const samplePlayer = {
 		bufferPlabackNode.connect(channelGain[channelNumber]);
 
 		bufferPlabackNode.start();
+	},
+	setChannelGain(gain, channelNumber) {
+		channelGain[channelNumber].gain.setTargetAtTime(
+			gain,
+			audioContext.currentTime,
+			0.1
+		);
 	}
 };
