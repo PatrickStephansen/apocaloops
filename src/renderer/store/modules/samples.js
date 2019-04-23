@@ -6,7 +6,7 @@ import { samplePlayer } from '../../services/sample-player';
 
 const exists = promisify(access);
 const readdirPromise = promisify(readdir);
-const readDir = path => readdirPromise(path, { encoding: 'utf-8' });
+const readDir = path => readdirPromise(path);
 const copyDir = (sourcePath, destinationPath) =>
 	readDir(sourcePath).then(paths => {
 		const copy = promisify(copyFile);
@@ -85,7 +85,6 @@ const actions = {
 						)
 						.then(() => [...banks, packagedSamplesDirectory]);
 				}
-
 				return banks;
 			})
 			.then(banks => {
@@ -101,7 +100,8 @@ const actions = {
 						dispatch('selectBank', { bankPath: bankPaths[0], channelNumber })
 					)
 				);
-			});
+			})
+			.catch(e => commit('addError', e));
 	},
 	selectBank({ commit, dispatch }, { bankPath, channelNumber }) {
 		commit('selectBankDirectory', { bankDirectory: bankPath, channelNumber });
