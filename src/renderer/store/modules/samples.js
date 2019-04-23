@@ -25,6 +25,7 @@ const state = {
 	],
 	errors: []
 };
+samplePlayer.setupChannels(2);
 
 // don't call these externally, call actions instead
 const mutations = {
@@ -103,7 +104,12 @@ const actions = {
 			selectedSampleFilePath: samplePath,
 			channelNumber
 		});
-		samplePlayer.playSample(getters.selectedSampleFileName);
+		samplePlayer.playSample(
+			getters.selectedSamplePerChannel.find(
+				channel => channel.channelNumber === channelNumber
+			).samplePath,
+			channelNumber
+		);
 	}
 };
 

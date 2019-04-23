@@ -7,6 +7,7 @@ import 'opus.js';
 import 'vorbis.js';
 
 let buffers = new Map();
+let channelGain = [];
 const audioContext = new AudioContext();
 const channelSplitter = new ChannelSplitterNode(audioContext, {
 	numberOfOutputs: 1
@@ -23,28 +24,38 @@ const readToAudioBuffer = filePath =>
 	);
 
 export const samplePlayer = {
+	setupChannels(numberOfChannels) {
+		for (
+			let channelIndex = 0;
+			channelIndex < numberOfChannels;
+			channelIndex++
+		) {
+			channelGain[channelIndex] = new GainNode(audioContext);
+			channelGain[channelIndex].connect(channelSplitter);
+		}
+	},
 	loadSamples(samplePaths) {
 		if (samplePaths && samplePaths.length) {
-			const { path, name } = samplePaths[0];
+			const { path } = samplePaths[0];
 			return readToAudioBuffer(path)
 				.then(buffer => {
-					buffers.set(name, buffer);
+					buffers.set(path, buffer);
 				})
 				.then(() => this.loadSamples(samplePaths.slice(1)));
 		}
 		return Promise.resolve();
 	},
-	playSample(sampleName) {
-		const sample = buffers.get(sampleName);
+	playSample(samplePath, channelNumber) {
+		const sample = buffers.get(samplePath);
 		if (!(sample && sample.length)) {
-			console.warn('sample not loaded', sampleName);
+			console.warn('sample not loaded', samplePath);
 			return;
 		}
 		const bufferPlabackNode = new AudioBufferSourceNode(audioContext, {
 			buffer: sample
 		});
 
-		bufferPlabackNode.connect(channelSplitter);
+		bufferPlabackNode.connect(channelGain[channelNumber]);
 
 		bufferPlabackNode.start();
 	}

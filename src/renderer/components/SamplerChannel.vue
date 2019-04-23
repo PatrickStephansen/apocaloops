@@ -3,10 +3,12 @@
 		<bank-selector
 			:selectedBankDirectory="selectedBankDirectory"
 			:banks="banks"
+			@bank-selected="$listeners['bank-selected']"
 		/>
 		<sample-list
-			:selectedSampleFileName="selectedSample.name"
+			:selectedSampleFileName="selectedSample.sampleFileName"
 			:samples="samples"
+			v-on="$listeners"
 		/>
 	</div>
 </template>

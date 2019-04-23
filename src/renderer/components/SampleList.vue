@@ -7,7 +7,7 @@
 				:key="index"
 				:class="{
 					sample: true,
-					active: selectedSampleFileName == sample.name
+					active: selectedSampleFileName === sample.name
 				}"
 				@click="$emit('sample-selected', { samplePath: sample.path })"
 			>
