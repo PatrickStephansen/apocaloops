@@ -1,12 +1,20 @@
 import { join } from 'path';
 import { promisify } from 'util';
-import { access, mkdir, readdir } from 'fs';
+import { access, mkdir, readdir, copyFile } from 'fs';
 
 import { samplePlayer } from '../../services/sample-player';
 
 const exists = promisify(access);
 const readdirPromise = promisify(readdir);
 const readDir = path => readdirPromise(path, { encoding: 'utf-8' });
+const copyDir = (sourcePath, destinationPath) =>
+	readDir(sourcePath).then(paths => {
+		const copy = promisify(copyFile);
+		return Promise.all(
+			paths.map(p => copy(join(sourcePath, p), join(destinationPath, p)))
+		);
+	});
+const createDirectory = promisify(mkdir);
 
 const state = {
 	libraryDirectory: '',
@@ -51,6 +59,8 @@ const mutations = {
 	}
 };
 
+const packagedSamplesDirectory = 'noise-drums';
+
 const actions = {
 	setLibraryDirectory({ commit, dispatch, state }, { libraryDirectory }) {
 		if (!libraryDirectory) {
@@ -58,8 +68,26 @@ const actions = {
 		}
 		commit('setLibraryDirectory', libraryDirectory);
 		return exists(libraryDirectory)
-			.catch(() => mkdir(libraryDirectory))
+			.catch(() => createDirectory(libraryDirectory))
 			.then(() => readDir(libraryDirectory))
+			.then(banks => {
+				if (!banks.some(b => b === packagedSamplesDirectory)) {
+					const destinationDirectory = join(
+						libraryDirectory,
+						packagedSamplesDirectory
+					);
+					return createDirectory(destinationDirectory)
+						.then(() =>
+							copyDir(
+								join(__static, packagedSamplesDirectory),
+								destinationDirectory
+							)
+						)
+						.then(() => [...banks, packagedSamplesDirectory]);
+				}
+
+				return banks;
+			})
 			.then(banks => {
 				const bankPaths = banks.map(bank => join(libraryDirectory, bank));
 				commit('setBankDirectories', {
