@@ -9,7 +9,7 @@
 				max="1"
 				step="0.05"
 				:value="gain"
-				@change="setGain($event.target.value)"
+				@input="setGain($event.target.value)"
 		/></label>
 	</div>
 </template>

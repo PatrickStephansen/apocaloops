@@ -7,7 +7,7 @@ import 'opus.js';
 import 'vorbis.js';
 
 let buffers = new Map();
-let channelGain = [];
+let channels = [];
 const audioContext = new AudioContext();
 const channelSplitter = new ChannelSplitterNode(audioContext, {
 	numberOfOutputs: 1
@@ -23,6 +23,7 @@ const readToAudioBuffer = filePath =>
 		decode(buffer, { context: audioContext })
 	);
 
+const crossFadeExponentialApproachConstant = 0.0005;
 export const samplePlayer = {
 	setupChannels(numberOfChannels) {
 		for (
@@ -30,8 +31,12 @@ export const samplePlayer = {
 			channelIndex < numberOfChannels;
 			channelIndex++
 		) {
-			channelGain[channelIndex] = new GainNode(audioContext);
-			channelGain[channelIndex].connect(channelSplitter);
+			channels[channelIndex] = {
+				outputGain: new GainNode(audioContext),
+				sampleOverlapMode: 'overlay',
+				bufferGain: new GainNode(audioContext, { gain: 0 })
+			};
+			channels[channelIndex].outputGain.connect(channelSplitter);
 		}
 	},
 	loadSamples(samplePaths) {
@@ -54,16 +59,34 @@ export const samplePlayer = {
 		const bufferPlabackNode = new AudioBufferSourceNode(audioContext, {
 			buffer: sample
 		});
+		let bufferGain;
+		if (channels[channelNumber].sampleOverlapMode === 'cross-fade') {
+			channels[channelNumber].bufferGain.gain.setTargetAtTime(
+				0,
+				audioContext.currentTime,
+				crossFadeExponentialApproachConstant
+			);
+			bufferGain = new GainNode(audioContext, { gain: 0 });
+			channels[channelNumber].bufferGain = bufferGain;
+		} else {
+			bufferGain = channels[channelNumber].bufferGain;
+		}
+		bufferGain.gain.setTargetAtTime(1, audioContext.currentTime, crossFadeExponentialApproachConstant);
+		bufferGain.gain.setTargetAtTime(0, bufferPlabackNode.buffer.duration, crossFadeExponentialApproachConstant);
 
-		bufferPlabackNode.connect(channelGain[channelNumber]);
+		bufferPlabackNode.connect(bufferGain);
+		bufferGain.connect(channels[channelNumber].outputGain);
 
 		bufferPlabackNode.start();
 	},
 	setChannelGain(gain, channelNumber) {
-		channelGain[channelNumber].gain.setTargetAtTime(
+		channels[channelNumber].outputGain.gain.setTargetAtTime(
 			gain,
 			audioContext.currentTime,
-			0.1
+			crossFadeExponentialApproachConstant
 		);
+	},
+	setChannelOverlapMode(channelNumber, modeId) {
+		channels[channelNumber].sampleOverlapMode = modeId;
 	}
 };

@@ -24,6 +24,14 @@
 						)
 					"
 					:gain="channel.gain"
+					:sampleOverlapBehaviourChoices="sampleOverlapBehaviourChoices"
+					:selectedSampleOverlapBehaviourId="channel.selectedSampleOverlapBehaviourId"
+					@overlap-behaviour-selected="
+						onSampleOverlapBehaviourSelection({
+							channelNumber,
+							sampleOverlapBehaviourId: $event.behaviourId
+						})
+					"
 					:samples="getSamplesForChannel(channelNumber)"
 					@bank-selected="
 						onBankSelection({ channelNumber, bankPath: $event.bankPath })
@@ -60,7 +68,8 @@ export default {
 			onLibraryDirectorySelection: 'setLibraryDirectory',
 			onBankSelection: 'selectBank',
 			onSampleSelection: 'selectSample',
-			onSetGain: 'setChannelGain'
+			onSetGain: 'setChannelGain',
+			onSampleOverlapBehaviourSelection: 'selectSampleOverlapBehaviour'
 		}),
 		getSamplesForChannel(channelNumber) {
 			const channel = this.samplesPerChannel.find(
@@ -82,7 +91,9 @@ export default {
 		...mapState({
 			libraryDirectory: state => state.samples.libraryDirectory,
 			channels: state => state.samples.channels,
-			errors: state => state.samples.errors
+			errors: state => state.samples.errors,
+			sampleOverlapBehaviourChoices: state =>
+				state.samples.sampleOverlapBehaviourChoices
 		})
 	},
 	mounted: function() {

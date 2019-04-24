@@ -1,6 +1,11 @@
 <template>
 	<div class="channel">
-		<gain-control :gain="gain" @set-gain="$listeners['set-gain']"/>
+		<gain-control :gain="gain" @set-gain="$listeners['set-gain']" />
+		<sample-overlap
+			:behaviourChoices="sampleOverlapBehaviourChoices"
+			:selectedBehaviourId="selectedSampleOverlapBehaviourId"
+			@overlap-behaviour-selected="$listeners['overlap-behaviour-selected']"
+		/>
 		<bank-selector
 			:selectedBankDirectory="selectedBankDirectory"
 			:banks="banks"
@@ -18,6 +23,7 @@
 import BankSelector from './BankSelector';
 import SampleList from './SampleList';
 import GainControl from './GainControl';
+import SampleOverlap from './SampleOverlap';
 
 export default {
 	name: 'sampler-channel',
@@ -27,12 +33,15 @@ export default {
 		'selectedBankDirectory',
 		'selectedSample',
 		'samples',
-		'gain'
+		'gain',
+		'sampleOverlapBehaviourChoices',
+		'selectedSampleOverlapBehaviourId'
 	],
 	components: {
 		BankSelector,
 		SampleList,
-		GainControl
+		GainControl,
+		SampleOverlap
 	}
 };
 </script>

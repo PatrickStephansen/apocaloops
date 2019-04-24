@@ -16,6 +16,11 @@ const copyDir = (sourcePath, destinationPath) =>
 	});
 const createDirectory = promisify(mkdir);
 
+const sampleOverlapBehaviourChoices = [
+	{ id: 'overlay', name: 'Overlay' },
+	{ id: 'cross-fade', name: 'Cross-Fade' }
+];
+
 const state = {
 	libraryDirectory: '',
 	bankDirectories: [],
@@ -24,15 +29,18 @@ const state = {
 			selectedBankDirectory: '',
 			sampleFilePaths: [],
 			selectedSampleFilePath: '',
-			gain: 1
+			gain: 1,
+			selectedSampleOverlapBehaviourId: 'overlay'
 		},
 		{
 			selectedBankDirectory: '',
 			sampleFilePaths: [],
 			selectedSampleFilePath: '',
-			gain: 1
+			gain: 1,
+			selectedSampleOverlapBehaviourId: 'overlay'
 		}
 	],
+	sampleOverlapBehaviourChoices,
 	errors: []
 };
 samplePlayer.setupChannels(2);
@@ -58,6 +66,14 @@ const mutations = {
 	},
 	setChannelGain(state, { gain, channelNumber }) {
 		state.channels[channelNumber].gain = gain;
+	},
+	selectSampleOverlapBehaviourId(
+		state,
+		{ sampleOverlapBehaviourId, channelNumber }
+	) {
+		state.channels[
+			channelNumber
+		].selectedSampleOverlapBehaviourId = sampleOverlapBehaviourId;
 	},
 	addError(state, error) {
 		state.errors.push(error);
@@ -147,6 +163,16 @@ const actions = {
 	setChannelGain({ commit }, { gain, channelNumber }) {
 		commit('setChannelGain', { gain, channelNumber });
 		samplePlayer.setChannelGain(gain, channelNumber);
+	},
+	selectSampleOverlapBehaviour(
+		{ commit },
+		{ sampleOverlapBehaviourId, channelNumber }
+	) {
+		commit('selectSampleOverlapBehaviourId', {
+			sampleOverlapBehaviourId,
+			channelNumber
+		});
+		samplePlayer.setChannelOverlapMode(channelNumber, sampleOverlapBehaviourId);
 	}
 };
 

@@ -1,17 +1,18 @@
 <template>
 	<div class="bank-selector">
 		<div class="form-group">
-			<label for="selected-bank">Selected Bank</label>
-			<select
-				name="selected-bank"
-				id="selected-bank"
-				:value="selectedBankDirectory.path"
-				@change="$emit('bank-selected', { bankPath: $event.target.value })"
-			>
-				<option v-for="bank in banks" :value="bank.path" :key="bank.path"
-					>{{ bank.name }}
-				</option>
-			</select>
+			<label
+				>Selected Bank
+				<select
+					name="selected-bank"
+					:value="selectedBankDirectory.path"
+					@change="$emit('bank-selected', { bankPath: $event.target.value })"
+				>
+					<option v-for="bank in banks" :value="bank.path" :key="bank.path"
+						>{{ bank.name }}
+					</option>
+				</select>
+			</label>
 		</div>
 	</div>
 </template>
