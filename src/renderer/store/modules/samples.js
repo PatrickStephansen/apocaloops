@@ -18,7 +18,8 @@ const createDirectory = promisify(mkdir);
 
 const sampleOverlapBehaviourChoices = [
 	{ id: 'overlay', name: 'Overlay' },
-	{ id: 'cross-fade', name: 'Cross-Fade' }
+	{ id: 'cross-fade', name: 'Cross-Fade' },
+	{ id: 'radio-mode', name: 'Radio Mode' }
 ];
 
 const state = {

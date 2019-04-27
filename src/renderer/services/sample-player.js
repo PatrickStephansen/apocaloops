@@ -59,8 +59,11 @@ export const samplePlayer = {
 		const bufferPlabackNode = new AudioBufferSourceNode(audioContext, {
 			buffer: sample
 		});
+		let startOffset = 0;
 		let bufferGain;
-		if (channels[channelNumber].sampleOverlapMode === 'cross-fade') {
+		if (channels[channelNumber].sampleOverlapMode === 'overlay') {
+			bufferGain = channels[channelNumber].bufferGain;
+		} else {
 			channels[channelNumber].bufferGain.gain.setTargetAtTime(
 				0,
 				audioContext.currentTime,
@@ -68,16 +71,26 @@ export const samplePlayer = {
 			);
 			bufferGain = new GainNode(audioContext, { gain: 0 });
 			channels[channelNumber].bufferGain = bufferGain;
-		} else {
-			bufferGain = channels[channelNumber].bufferGain;
+			if (channels[channelNumber].sampleOverlapMode === 'radio-mode') {
+				startOffset =
+					audioContext.currentTime % bufferPlabackNode.buffer.duration;
+			}
 		}
-		bufferGain.gain.setTargetAtTime(1, audioContext.currentTime, crossFadeExponentialApproachConstant);
-		bufferGain.gain.setTargetAtTime(0, bufferPlabackNode.buffer.duration, crossFadeExponentialApproachConstant);
+		bufferGain.gain.setTargetAtTime(
+			1,
+			audioContext.currentTime,
+			crossFadeExponentialApproachConstant
+		);
+		bufferGain.gain.setTargetAtTime(
+			0,
+			bufferPlabackNode.buffer.duration,
+			crossFadeExponentialApproachConstant
+		);
 
 		bufferPlabackNode.connect(bufferGain);
 		bufferGain.connect(channels[channelNumber].outputGain);
 
-		bufferPlabackNode.start();
+		bufferPlabackNode.start(audioContext.currentTime, startOffset);
 	},
 	setChannelGain(gain, channelNumber) {
 		channels[channelNumber].outputGain.gain.setTargetAtTime(
