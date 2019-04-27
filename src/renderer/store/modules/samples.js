@@ -39,7 +39,8 @@ const state = {
 			selectedSampleFilePath: '',
 			gain: 1,
 			selectedSampleOverlapBehaviourId: 'overlay',
-			selectedSampleEndBehaviourId: 'stop'
+			selectedSampleEndBehaviourId: 'stop',
+			playbackRate: 1
 		},
 		{
 			selectedBankDirectory: '',
@@ -47,7 +48,8 @@ const state = {
 			selectedSampleFilePath: '',
 			gain: 1,
 			selectedSampleOverlapBehaviourId: 'overlay',
-			selectedSampleEndBehaviourId: 'stop'
+			selectedSampleEndBehaviourId: 'stop',
+			playbackRate: 1
 		}
 	],
 	sampleOverlapBehaviourChoices,
@@ -78,6 +80,9 @@ const mutations = {
 	setChannelGain(state, { gain, channelNumber }) {
 		state.channels[channelNumber].gain = gain;
 	},
+	setChannelPlaybackRate(state, { playbackRate, channelNumber }) {
+		state.channels[channelNumber].playbackRate = playbackRate;
+	},
 	selectSampleOverlapBehaviourId(
 		state,
 		{ sampleOverlapBehaviourId, channelNumber }
@@ -87,7 +92,9 @@ const mutations = {
 		].selectedSampleOverlapBehaviourId = sampleOverlapBehaviourId;
 	},
 	selectSampleEndBehaviourId(state, { sampleEndBehaviourId, channelNumber }) {
-		state.channels[channelNumber].selectedSampleEndBehaviourId = sampleEndBehaviourId;
+		state.channels[
+			channelNumber
+		].selectedSampleEndBehaviourId = sampleEndBehaviourId;
 	},
 	addError(state, error) {
 		state.errors.push(error);
@@ -201,6 +208,10 @@ const actions = {
 		commit('setChannelGain', { gain, channelNumber });
 		samplePlayer.setChannelGain(gain, channelNumber);
 	},
+	setChannelPlaybackRate({ commit }, { playbackRate, channelNumber }) {
+		commit('setChannelPlaybackRate', { playbackRate, channelNumber });
+		samplePlayer.setPlaybackRate(channelNumber, playbackRate);
+	},
 	selectSampleOverlapBehaviour(
 		{ commit },
 		{ sampleOverlapBehaviourId, channelNumber }
@@ -219,7 +230,10 @@ const actions = {
 			sampleEndBehaviourId,
 			channelNumber
 		});
-		samplePlayer.setChannelSampleEndBehaviour(channelNumber, sampleEndBehaviourId);
+		samplePlayer.setChannelSampleEndBehaviour(
+			channelNumber,
+			sampleEndBehaviourId
+		);
 	}
 };
 

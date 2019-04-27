@@ -36,7 +36,9 @@ export const samplePlayer = {
 				outputGain: new GainNode(audioContext),
 				sampleOverlapMode: 'overlay',
 				sampleEndBehaviour: 'stop',
-				bufferGain: new GainNode(audioContext, { gain: 0 })
+				bufferGain: new GainNode(audioContext, { gain: 0 }),
+				playingBuffer: null,
+				playbackRate: 1
 			};
 			channels[channelIndex].outputGain.connect(channelSplitter);
 		}
@@ -59,7 +61,8 @@ export const samplePlayer = {
 			return;
 		}
 		const bufferPlabackNode = new AudioBufferSourceNode(audioContext, {
-			buffer: sample
+			buffer: sample,
+			playbackRate: channels[channelNumber].playbackRate
 		});
 		let startOffset = 0;
 		let bufferGain;
@@ -105,6 +108,7 @@ export const samplePlayer = {
 		}
 
 		bufferPlabackNode.start(audioContext.currentTime, startOffset);
+		channels[channelNumber].playingBuffer = bufferPlabackNode;
 	},
 	setChannelGain(gain, channelNumber) {
 		channels[channelNumber].outputGain.gain.setTargetAtTime(
@@ -118,5 +122,13 @@ export const samplePlayer = {
 	},
 	setChannelSampleEndBehaviour(channelNumber, sampleEndBehaviourId) {
 		channels[channelNumber].sampleEndBehaviour = sampleEndBehaviourId;
+	},
+	setPlaybackRate(channelNumber, rate) {
+		channels[channelNumber].playbackRate = rate;
+		channels[channelNumber].playingBuffer.playbackRate.setTargetAtTime(
+			rate,
+			audioContext.currentTime,
+			crossFadeExponentialApproachConstant
+		);
 	}
 };

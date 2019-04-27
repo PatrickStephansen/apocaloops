@@ -24,6 +24,7 @@
 						)
 					"
 					:gain="channel.gain"
+					:playbackRate="channel.playbackRate"
 					:sampleOverlapBehaviourChoices="sampleOverlapBehaviourChoices"
 					:selectedSampleOverlapBehaviourId="
 						channel.selectedSampleOverlapBehaviourId
@@ -50,6 +51,12 @@
 						onSampleSelection({ channelNumber, samplePath: $event.samplePath })
 					"
 					@set-gain="onSetGain({ channelNumber, gain: $event.gain })"
+					@set-playback-rate="
+						onSetPlaybackRate({
+							channelNumber,
+							playbackRate: $event.playbackRate
+						})
+					"
 				/>
 			</div>
 		</div>
@@ -79,6 +86,7 @@ export default {
 			onBankSelection: 'selectBank',
 			onSampleSelection: 'selectSample',
 			onSetGain: 'setChannelGain',
+			onSetPlaybackRate: 'setChannelPlaybackRate',
 			onSampleOverlapBehaviourSelection: 'selectSampleOverlapBehaviour',
 			onSampleEndBehaviourSelection: 'selectSampleEndBehaviour'
 		}),
