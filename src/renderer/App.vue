@@ -25,11 +25,21 @@
 					"
 					:gain="channel.gain"
 					:sampleOverlapBehaviourChoices="sampleOverlapBehaviourChoices"
-					:selectedSampleOverlapBehaviourId="channel.selectedSampleOverlapBehaviourId"
+					:selectedSampleOverlapBehaviourId="
+						channel.selectedSampleOverlapBehaviourId
+					"
 					@overlap-behaviour-selected="
 						onSampleOverlapBehaviourSelection({
 							channelNumber,
 							sampleOverlapBehaviourId: $event.behaviourId
+						})
+					"
+					:sampleEndBehaviourChoices="sampleEndBehaviourChoices"
+					:selectedSampleEndBehaviourId="channel.selectedSampleEndBehaviourId"
+					@sample-end-behaviour-selected="
+						onSampleEndBehaviourSelection({
+							channelNumber,
+							sampleEndBehaviourId: $event.behaviourId
 						})
 					"
 					:samples="getSamplesForChannel(channelNumber)"
@@ -69,7 +79,8 @@ export default {
 			onBankSelection: 'selectBank',
 			onSampleSelection: 'selectSample',
 			onSetGain: 'setChannelGain',
-			onSampleOverlapBehaviourSelection: 'selectSampleOverlapBehaviour'
+			onSampleOverlapBehaviourSelection: 'selectSampleOverlapBehaviour',
+			onSampleEndBehaviourSelection: 'selectSampleEndBehaviour'
 		}),
 		getSamplesForChannel(channelNumber) {
 			const channel = this.samplesPerChannel.find(
@@ -93,7 +104,9 @@ export default {
 			channels: state => state.samples.channels,
 			errors: state => state.samples.errors,
 			sampleOverlapBehaviourChoices: state =>
-				state.samples.sampleOverlapBehaviourChoices
+				state.samples.sampleOverlapBehaviourChoices,
+			sampleEndBehaviourChoices: state =>
+				state.samples.sampleEndBehaviourChoices
 		})
 	},
 	mounted: function() {

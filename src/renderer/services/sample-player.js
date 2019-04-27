@@ -1,6 +1,7 @@
 import { readFile } from 'fs';
 import { promisify } from 'util';
 import decode from 'audio-decode';
+import store from '../store';
 import 'flac.js';
 import 'mp3.js';
 import 'opus.js';
@@ -34,6 +35,7 @@ export const samplePlayer = {
 			channels[channelIndex] = {
 				outputGain: new GainNode(audioContext),
 				sampleOverlapMode: 'overlay',
+				sampleEndBehaviour: 'stop',
 				bufferGain: new GainNode(audioContext, { gain: 0 })
 			};
 			channels[channelIndex].outputGain.connect(channelSplitter);
@@ -90,6 +92,18 @@ export const samplePlayer = {
 		bufferPlabackNode.connect(bufferGain);
 		bufferGain.connect(channels[channelNumber].outputGain);
 
+		if (channels[channelNumber].sampleEndBehaviour === 'loop') {
+			bufferPlabackNode.loop = true;
+		}
+		if (channels[channelNumber].sampleEndBehaviour === 'next') {
+			bufferPlabackNode.onended = () =>
+				store.dispatch('selectNextSample', { channelNumber });
+		}
+		if (channels[channelNumber].sampleEndBehaviour === 'random') {
+			bufferPlabackNode.onended = () =>
+				store.dispatch('selectRandomSample', { channelNumber });
+		}
+
 		bufferPlabackNode.start(audioContext.currentTime, startOffset);
 	},
 	setChannelGain(gain, channelNumber) {
@@ -101,5 +115,8 @@ export const samplePlayer = {
 	},
 	setChannelOverlapMode(channelNumber, modeId) {
 		channels[channelNumber].sampleOverlapMode = modeId;
+	},
+	setChannelSampleEndBehaviour(channelNumber, sampleEndBehaviourId) {
+		channels[channelNumber].sampleEndBehaviour = sampleEndBehaviourId;
 	}
 };

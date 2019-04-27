@@ -30,7 +30,7 @@ artifacts:
 
 deploy:
   release: $(appveyor_repo_tag_name)
-  description: 'Add channels with gain controls, and bundle some samples'
+  description: 'Add different options for what to do when a sample ends. Add radio mode to overlap behaviour options. Radio mode behaves as if all the samples are always playing, and selecting one tunes in to that station.'
   provider: GitHub
   auth_token:
     secure: ipKyqhOAwoaDWKmffCB20kyRzDQpQueR5VmA18JkDSQOmLZnbc10DaGUjFGKTcCA

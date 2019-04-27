@@ -22,6 +22,13 @@ const sampleOverlapBehaviourChoices = [
 	{ id: 'radio-mode', name: 'Radio Mode' }
 ];
 
+const sampleEndBehaviourChoices = [
+	{ id: 'stop', name: 'Stop (one-shot)' },
+	{ id: 'loop', name: 'Play again (loop same sample)' },
+	{ id: 'next', name: 'Play next sample' },
+	{ id: 'random', name: 'Play random sample' }
+];
+
 const state = {
 	libraryDirectory: '',
 	bankDirectories: [],
@@ -31,17 +38,20 @@ const state = {
 			sampleFilePaths: [],
 			selectedSampleFilePath: '',
 			gain: 1,
-			selectedSampleOverlapBehaviourId: 'overlay'
+			selectedSampleOverlapBehaviourId: 'overlay',
+			selectedSampleEndBehaviourId: 'stop'
 		},
 		{
 			selectedBankDirectory: '',
 			sampleFilePaths: [],
 			selectedSampleFilePath: '',
 			gain: 1,
-			selectedSampleOverlapBehaviourId: 'overlay'
+			selectedSampleOverlapBehaviourId: 'overlay',
+			selectedSampleEndBehaviourId: 'stop'
 		}
 	],
 	sampleOverlapBehaviourChoices,
+	sampleEndBehaviourChoices,
 	errors: []
 };
 samplePlayer.setupChannels(2);
@@ -75,6 +85,9 @@ const mutations = {
 		state.channels[
 			channelNumber
 		].selectedSampleOverlapBehaviourId = sampleOverlapBehaviourId;
+	},
+	selectSampleEndBehaviourId(state, { sampleEndBehaviourId, channelNumber }) {
+		state.channels[channelNumber].selectedSampleEndBehaviourId = sampleEndBehaviourId;
 	},
 	addError(state, error) {
 		state.errors.push(error);
@@ -161,6 +174,29 @@ const actions = {
 			channelNumber
 		);
 	},
+	selectNextSample({ dispatch, state }, { channelNumber }) {
+		const channel = state.channels[channelNumber];
+		const currentSample = channel.selectedSampleFilePath;
+		const currentSampleIndex = channel.sampleFilePaths.findIndex(
+			s => s === currentSample
+		);
+		const nextSampleIndex =
+			(currentSampleIndex + 1) % channel.sampleFilePaths.length;
+		dispatch('selectSample', {
+			samplePath: channel.sampleFilePaths[nextSampleIndex],
+			channelNumber
+		});
+	},
+	selectRandomSample({ dispatch, state }, { channelNumber }) {
+		const channel = state.channels[channelNumber];
+		const nextSampleIndex = Math.floor(
+			Math.random() * channel.sampleFilePaths.length
+		);
+		dispatch('selectSample', {
+			samplePath: channel.sampleFilePaths[nextSampleIndex],
+			channelNumber
+		});
+	},
 	setChannelGain({ commit }, { gain, channelNumber }) {
 		commit('setChannelGain', { gain, channelNumber });
 		samplePlayer.setChannelGain(gain, channelNumber);
@@ -174,6 +210,16 @@ const actions = {
 			channelNumber
 		});
 		samplePlayer.setChannelOverlapMode(channelNumber, sampleOverlapBehaviourId);
+	},
+	selectSampleEndBehaviour(
+		{ commit },
+		{ sampleEndBehaviourId, channelNumber }
+	) {
+		commit('selectSampleEndBehaviourId', {
+			sampleEndBehaviourId,
+			channelNumber
+		});
+		samplePlayer.setChannelSampleEndBehaviour(channelNumber, sampleEndBehaviourId);
 	}
 };
 

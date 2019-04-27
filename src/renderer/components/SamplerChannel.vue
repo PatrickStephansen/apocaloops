@@ -6,6 +6,13 @@
 			:selectedBehaviourId="selectedSampleOverlapBehaviourId"
 			@overlap-behaviour-selected="$listeners['overlap-behaviour-selected']"
 		/>
+		<sample-end
+			:behaviourChoices="sampleEndBehaviourChoices"
+			:selectedBehaviourId="selectedSampleEndBehaviourId"
+			@sample-end-behaviour-selected="
+				$listeners['sample-end-behaviour-selected']
+			"
+		/>
 		<bank-selector
 			:selectedBankDirectory="selectedBankDirectory"
 			:banks="banks"
@@ -24,6 +31,7 @@ import BankSelector from './BankSelector';
 import SampleList from './SampleList';
 import GainControl from './GainControl';
 import SampleOverlap from './SampleOverlap';
+import SampleEnd from './SampleEnd';
 
 export default {
 	name: 'sampler-channel',
@@ -35,13 +43,16 @@ export default {
 		'samples',
 		'gain',
 		'sampleOverlapBehaviourChoices',
-		'selectedSampleOverlapBehaviourId'
+		'sampleEndBehaviourChoices',
+		'selectedSampleOverlapBehaviourId',
+		'selectedSampleEndBehaviourId'
 	],
 	components: {
 		BankSelector,
 		SampleList,
 		GainControl,
-		SampleOverlap
+		SampleOverlap,
+		SampleEnd
 	}
 };
 </script>
